@@ -1,8 +1,17 @@
+using DataStore.EF;
+using Microsoft.EntityFrameworkCore;
 using System.Configuration;
+
 
 var builder = WebApplication.CreateBuilder(args);
 // ConfigureServices() **************************
 builder.Services.AddControllers();
+builder.Services.AddDbContext<ApplicationDbContext>(options=>options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+//builder.Services.AddControllers(options =>
+//{
+//    options.Filters.Add<DiscontinueVersion1ResourceFilter>();
+//});
 
 
 builder.Services.AddSwaggerGen(x =>
