@@ -3,17 +3,20 @@ using DataStore.EF;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
+using WebAPI.Filters.V2;
 
-namespace WebAPI.Controllers
+namespace WebAPI.Controllers.V2
 {
-    [ApiVersion("1.0")]
+    [ApiVersion("2.0")]
     [ApiController]
-    [Route("api/[controller]")]
+    //[Route("api/tickets")]
+    [Route("api/v{v:apiVersion}/tickets")]// Шаблонизированный марш с параметром
+    // api/tickets?api-version=2.0
     //[DiscontinueVersion1ResourceFilter]
-    public class TicketsController: ControllerBase
+    public class TicketsV2Controller: ControllerBase
     {
         private readonly ApplicationDbContext _db;
-        public TicketsController(ApplicationDbContext db)
+        public TicketsV2Controller(ApplicationDbContext db)
         {
             _db = db;
         }
@@ -64,13 +67,14 @@ namespace WebAPI.Controllers
         /// <param name="newTicket">The ticket  for creating</param>
         /// <returns>If an error occurs returns status code 500</returns>
         [HttpPost]
-        public  async Task<IActionResult> Post([FromBody] Ticket newTicket)
+        [Ticket_EnsureDescriptionPresentActionFilter]
+        public  async Task<IActionResult> PostAsync([FromBody] Ticket ticket)
         {
             try
             {
-                await _db.Tickets.AddAsync(newTicket);
+                await _db.Tickets.AddAsync(ticket);
                 await _db.SaveChangesAsync();
-                return CreatedAtAction(nameof(GetByIdAsync), new { id = newTicket.Id },newTicket);
+                return CreatedAtAction(nameof(GetByIdAsync), new { id = ticket.Id }, ticket);
             } 
             catch(Exception ex)
             {
@@ -97,12 +101,13 @@ namespace WebAPI.Controllers
         /// <param name="ticketForUpdate">The ticket for updating</param>
         /// <returns>If an error occurs returns status code 500</returns>
         [HttpPut]
-        public async Task<IActionResult> PutAsync(Ticket ticketForUpdate)
+        [Ticket_EnsureDescriptionPresentActionFilter]
+        public async Task<IActionResult> PutAsync(Ticket ticket)
         {
             try
             {
                 //_db.Update(ticketForUpdate);
-                _db.Entry(ticketForUpdate).State = EntityState.Modified;
+                _db.Entry(ticket).State = EntityState.Modified;
                 await _db.SaveChangesAsync();
                 return NoContent();
             }

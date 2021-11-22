@@ -12,7 +12,7 @@ namespace Core.Models
         public int Id { get; set; }
         [Required]
         public string Title { get; set; }
-        [Required]
+
         public string Description { get; set; }
         [Required]
         public double Price { get; set; }
@@ -65,6 +65,10 @@ namespace Core.Models
             if (!EventDate.HasValue || !EnteredDate.HasValue)
                 return true;
             return EventDate.Value.Date >= EnteredDate.Value.Date;
+        }
+        public bool ValidateDescription()
+        {
+            return !string.IsNullOrWhiteSpace(Description);
         }
     }
 }
