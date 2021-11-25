@@ -16,6 +16,7 @@ namespace Core.DTO
         [MaxLength(30)]
         [MinLength(4)]
         public string LastName { get; set; }
-                                
+        public string Address { get; set; }
+        public string PhoneNumber { get; set; }
     }
 }

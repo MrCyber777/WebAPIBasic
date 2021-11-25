@@ -1,10 +1,11 @@
-﻿using Core.DTO;
+﻿using AutoMapper;
+using Core.DTO;
 using Core.Models;
 using DataStore.EF;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
-using System.Web.Http.Description;
+
 
 namespace WebAPI.Controllers
 {
@@ -14,9 +15,11 @@ namespace WebAPI.Controllers
     public class ProjectsController : ControllerBase
     {
         private readonly ApplicationDbContext _db;
-        public ProjectsController(ApplicationDbContext db)
+        private readonly IMapper _mapper;
+        public ProjectsController(ApplicationDbContext db,IMapper mapper)
         {
             _db = db;
+            _mapper = mapper;
         }
         /// <summary>
         /// Gets all projects from the database
@@ -158,23 +161,23 @@ namespace WebAPI.Controllers
         /// <param name="pId">Id of the project</param>
         /// <returns>Ok if the DTO is  formed successfully</returns>
         [HttpGet]
-        [Route("api/projects/{pId}/eventadmins")]
+        [Route("/api/projects/{pId}/eventadmins")]
         public async Task<IActionResult> GetTicketAsync(int pId)
         {
             try
             {
                 // Реализовать выборку всех администраторов по ID проекта (pId)
-                var adminsFromDB = await _db.EventAdministrators.FirstOrDefaultAsync(x => x.ProjectId == pId);
-
+                var adminsFromDB = await _db.EventAdministrators.Where(x => x.ProjectId == pId).ToListAsync();
+                var dto = _mapper.Map<IEnumerable<EventAdministrator>, IEnumerable<EventAdministratorDTO>>(adminsFromDB);
                 // Подумать и реализовать передачу данных о администраторах в DTO объекте
-                var admins = await _db.EventAdministrators.Include(x => x.ProjectId).Select(x =>
-                   new EventAdministratorDTO()
-                   {
-                       Id = x.Id,
-                       FirstName = x.FirstName,
-                       LastName = x.LastName
-                   }).SingleOrDefaultAsync(x => x.Id == pId);
-                return Ok(admins);
+                //var admins = await _db.EventAdministrators.Include(x => x.ProjectId).Select(x =>
+                //   new EventAdministratorDTO()
+                //   {
+                //       Id = x.Id,
+                //       FirstName = x.FirstName,
+                //       LastName = x.LastName
+                //   }).FirstOrDefaultAsync(x => x.Id == pId);
+                return Ok(dto);
             }
             catch (Exception ex)
             {
@@ -192,25 +195,28 @@ namespace WebAPI.Controllers
         /// </summary>
         /// <param name="eventAdministrator">eventAdministrator</param>
         /// <returns>eventAdministratorDTO</returns>
-        [ResponseType(typeof(EventAdministratorDTO))]
+
         [HttpPost]
-        [Route("api/projects/{pId}/eventadmins")]
-        public async Task<IActionResult> PostAdminInfoAsync(EventAdministrator eventAdministrator)
+        [Route("/api/projects/eventadmins")]
+        public async Task<IActionResult> PostAdminInfoAsync([FromBody] EventAdministratorDTO eventAdministratorDTO)
         {
             try
             {
-                //if (!ModelState.IsValid)
+                
+                 //if (!ModelState.IsValid)
                 //    return BadRequest(ModelState);
+             var eventAdministrator =  _mapper.Map<EventAdministratorDTO, EventAdministrator>(eventAdministratorDTO);
                 await _db.EventAdministrators.AddAsync(eventAdministrator);
-                _db.Entry(eventAdministrator).Reference(x => x.FirstName).Load();
+                await _db.SaveChangesAsync();
+                //_db.Entry(eventAdministrator).Reference(x => x.FirstName).Load();
 
-                var eventAdministratorDTO = new EventAdministratorDTO()
-                {
-                    Id = eventAdministrator.Id,
-                    FirstName = eventAdministrator.FirstName,
-                    LastName = eventAdministrator.LastName
-                };
-                return CreatedAtRoute("", new { id = eventAdministrator.Id }, eventAdministratorDTO);
+                //var eventAdministratorDTO = new EventAdministratorDTO()
+                //{
+                //    Id = eventAdministrator.Id,
+                //    FirstName = eventAdministrator.FirstName,
+                //    LastName = eventAdministrator.LastName
+                //};
+                return Ok(eventAdministrator);
             }
             catch(Exception ex)
             {

@@ -4,13 +4,14 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
 using WebAPI.Filters.V2;
+using WebAPI.QueryFilters;
 
 namespace WebAPI.Controllers.V2
 {
     [ApiVersion("2.0")]
     [ApiController]
     //[Route("api/tickets")]
-    [Route("api/v{v:apiVersion}/tickets")]// Шаблонизированный марш с параметром
+    [Route("api/v{v:apiVersion}/tickets")]// Шаблонизированный маршрут с параметром
     // api/tickets?api-version=2.0
     //[DiscontinueVersion1ResourceFilter]
     public class TicketsV2Controller: ControllerBase
@@ -26,18 +27,35 @@ namespace WebAPI.Controllers.V2
         /// <returns>Returns all tickets from the database or if an error occurs returns BadRequest</returns>
         [HttpGet]
         //[Route("api/ticket")]
-        public async Task <IActionResult> GetAsync()
+        public async Task <IActionResult> GetAsync([FromQuery]TicketQueryFilter filter)
         {
+            IQueryable<Ticket> queryTickets;
             try
             {
-                var ticketsFromDB = await _db.Tickets.ToListAsync();
-                return Ok(ticketsFromDB);
+                //var ticketsFromDB = await _db.Tickets.ToListAsync();
+                queryTickets = _db.Tickets;
+                if( queryTickets is not null)
+                {
+                    if (filter.Id.HasValue)                    
+                        queryTickets=queryTickets.Where(x=>x.Id == filter.Id);                        
+                   
+                    if (!string.IsNullOrWhiteSpace(filter.Title))                   
+                        queryTickets=queryTickets.Where(x=>x.Title.ToLower().Contains(filter.Title.ToLower()));
+                    
+                    if(!string.IsNullOrWhiteSpace(filter.Description))
+                        queryTickets=queryTickets.Where(x=>x.Description.ToLower().Contains( filter.Description.ToLower()));
+                    if( !await queryTickets.AnyAsync())
+                        return NotFound();   
+                }
+                
             }
             catch(Exception ex)
             {
                 Debug.WriteLine(ex.Message);
                 return BadRequest();
-            }               
+            }
+
+            return Ok(await queryTickets.ToListAsync());
             //return ticketsFromDB;          
         }
         /// <summary>
@@ -46,18 +64,36 @@ namespace WebAPI.Controllers.V2
         /// <param name="id">Id of the ticket</param>
         /// <returns>Returns the ticket from the database or if an error occurs returns NotFound</returns>
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetByIdAsync(int id)
+        public async Task<IActionResult> GetByIdAsync([FromQuery] TicketQueryFilter filter)
         {
+            IQueryable<Ticket> queryTickets;
             try
             {
-                Ticket ticketFromDB = await _db.Tickets.FindAsync(id);
-                return Ok(ticketFromDB);
+                queryTickets=_db.Tickets;
+                if(queryTickets is not null)
+                {
+                    if(!string.IsNullOrWhiteSpace(filter.Owner))
+                        queryTickets=queryTickets.Where(x=>x.Owner.ToLower().Contains(filter.Owner.ToLower()));
+
+                    if(filter.EventDate.HasValue)
+                        queryTickets=queryTickets.Where(x=>x.EventDate==filter.EventDate);
+
+                    if(filter.EnteredDate.HasValue)
+                        queryTickets=queryTickets.Where(x=>x.EnteredDate==filter.EnteredDate);
+
+                    if (!await queryTickets.AnyAsync())
+                        return NotFound();
+                }
+                //Ticket ticketFromDB = await _db.Tickets.FindAsync(id);
+                
             }
             catch(Exception ex)
             {
                 Debug.WriteLine(ex.Message);
                 return NotFound();
-            }           
+            }
+
+            return Ok(await queryTickets.ToListAsync());
             //return ticketFromDB;
            
         }

@@ -11,6 +11,11 @@ builder.Services.AddControllers(options =>
 {
     options.SuppressAsyncSuffixInActionNames = false;
 });
+builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+builder.Services.AddVersionedApiExplorer(options =>
+{
+    options.GroupNameFormat = "'v'VVV";//Конфигурация формата версий
+});
 builder.Services.AddApiVersioning(options =>
 {
     // Указываем приложению использовать версию API по умолчанию
@@ -36,6 +41,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options=>options.UseSqlServe
 builder.Services.AddSwaggerGen(x =>
         {
             x.SwaggerDoc("v1", new() { Title = "Basic Web API", Version = "v1" });
+            x.SwaggerDoc("v2", new() { Title = "Basic Web API", Version = "v2" });
         });
 // **********************************************
 var app = builder.Build();
@@ -43,7 +49,10 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
-    app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Web API Application v1"));
+    app.UseSwaggerUI(c => {
+        c.SwaggerEndpoint("/swagger/v1/swagger.json", "Web API Application v1");
+        c.SwaggerEndpoint("/swagger/v2/swagger.json", "Web API Application v2");
+    });
 }
 
 app.MapControllers();
