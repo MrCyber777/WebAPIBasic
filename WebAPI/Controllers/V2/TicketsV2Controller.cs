@@ -44,6 +44,16 @@ namespace WebAPI.Controllers.V2
                     
                     if(!string.IsNullOrWhiteSpace(filter.Description))
                         queryTickets=queryTickets.Where(x=>x.Description.ToLower().Contains( filter.Description.ToLower()));
+
+                    if(!string.IsNullOrWhiteSpace(filter.Owner))
+                        queryTickets=queryTickets.Where(x=>x.Owner.ToLower().Contains(filter.Owner.ToLower()));
+
+                    if(filter.EventDate.HasValue)
+                        queryTickets=queryTickets.Where(x=>x.EventDate==filter.EventDate);
+
+                    if(filter.EnteredDate.HasValue)
+                        queryTickets=queryTickets.Where(x=>x.EnteredDate==filter.EnteredDate);
+
                     if( !await queryTickets.AnyAsync())
                         return NotFound();   
                 }
@@ -64,38 +74,21 @@ namespace WebAPI.Controllers.V2
         /// <param name="id">Id of the ticket</param>
         /// <returns>Returns the ticket from the database or if an error occurs returns NotFound</returns>
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetByIdAsync([FromQuery] TicketQueryFilter filter)
+        public async Task<IActionResult> GetByIdAsync(int id)
         {
-            IQueryable<Ticket> queryTickets;
+           
             try
-            {
-                queryTickets=_db.Tickets;
-                if(queryTickets is not null)
-                {
-                    if(!string.IsNullOrWhiteSpace(filter.Owner))
-                        queryTickets=queryTickets.Where(x=>x.Owner.ToLower().Contains(filter.Owner.ToLower()));
-
-                    if(filter.EventDate.HasValue)
-                        queryTickets=queryTickets.Where(x=>x.EventDate==filter.EventDate);
-
-                    if(filter.EnteredDate.HasValue)
-                        queryTickets=queryTickets.Where(x=>x.EnteredDate==filter.EnteredDate);
-
-                    if (!await queryTickets.AnyAsync())
-                        return NotFound();
-                }
-                //Ticket ticketFromDB = await _db.Tickets.FindAsync(id);
-                
+            {                                            
+                Ticket ticketFromDB = await _db.Tickets.FindAsync(id);  
+                return Ok(ticketFromDB);
             }
             catch(Exception ex)
             {
                 Debug.WriteLine(ex.Message);
                 return NotFound();
             }
-
-            return Ok(await queryTickets.ToListAsync());
-            //return ticketFromDB;
            
+            //return ticketFromDB;          
         }
         /// <summary>
         /// Creates a new ticket of a particular version

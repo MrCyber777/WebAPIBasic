@@ -113,14 +113,14 @@ namespace WebAPI.Controllers
         /// <param name="projectForDeletion">The project for deletion</param>
         /// <returns>Ok if the project has been deleted successfully or if an error occurs returns NotFound</returns>
         [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete(Project projectForDeletion/*int id*/)
+        public async Task<IActionResult> Delete(int id)
         {
             try
             {
-                Project projectFromDB = await _db.Projects.FirstOrDefaultAsync(x => x.Id == projectForDeletion.Id);
-                _db.Entry(projectForDeletion).State = EntityState.Deleted;
+                Project projectFromDB = await _db.Projects.FindAsync(id);
+                _db.Entry(projectFromDB).State = EntityState.Deleted;
                 await _db.SaveChangesAsync();
-                return Ok(projectForDeletion);
+                return Ok(projectFromDB);
             }
             catch (Exception ex)
             {

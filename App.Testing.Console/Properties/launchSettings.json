@@ -1,0 +1,12 @@
+{
+  "profiles": {
+    "App.Testing.Console": {
+      "commandName": "Project"
+    },
+    "WSL": {
+      "commandName": "WSL2",
+      "environmentVariables": {},
+      "distributionName": ""
+    }
+  }
+}
