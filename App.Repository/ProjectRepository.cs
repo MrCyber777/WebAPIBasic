@@ -1,4 +1,5 @@
 ﻿using App.Repository.ApiClient;
+using Core.DTO;
 using Core.Models;
 using System;
 using System.Collections.Generic;
@@ -27,30 +28,30 @@ namespace App.Repository
         }
         public async Task<int> PostAsync(Project newProject)
         {
-            var project = await _webApiExecuter.InvokePost("api/projects",newProject.Id);
-            return project;
+            var project = await _webApiExecuter.InvokePost("api/projects",newProject);
+            return project.Id;
         }
-        public async Task PutAsync<Project>(Project projectForUpdate)
+        public async Task PutAsync(Project projectForUpdate)
         {
              await _webApiExecuter.InvokePut("api/projects",projectForUpdate);           
         }
         public async Task DeleteAsync(int id)
         {
-            await _webApiExecuter.InvokeDelete($"api/projects/{id}/tickets");           
+            await _webApiExecuter.InvokeDelete($"api/projects/{id}");           
         }
         public async Task<Project> GetProjectTicketAsync(int pId)
         {
-            var ticketsFromDB = await _webApiExecuter.InvokeGet<Project>($"api/projects/{pId}");
+            var ticketsFromDB = await _webApiExecuter.InvokeGet<Project>($"api/projects/{pId}/tickets");
             return ticketsFromDB;
         }
-        public async Task<EventAdministrator> GetTicketAsync(int pId)
+        public async Task<EventAdministratorDTO> GetTicketAsync(int pId)
         {
-            var adminsFromDB = await _webApiExecuter.InvokeGet<EventAdministrator>($"/api/projects/{pId}/eventadmins");
+            var adminsFromDB = await _webApiExecuter.InvokeGet<EventAdministratorDTO>($"/api/projects/{pId}/eventadmins");
             return adminsFromDB;
         }
-        public async Task<EventAdministrator> PostAdminInfoAsync(EventAdministrator eventAdmin)
+        public async Task<EventAdministratorDTO> PostAdminInfoAsync(EventAdministratorDTO eventAdminDTO)
         {
-            var eventAdministrator = await _webApiExecuter.InvokePost("api/projects/eventadmins",eventAdmin);
+            var eventAdministrator = await _webApiExecuter.InvokePost("api/projects/eventadmins",eventAdminDTO);
             return eventAdministrator;
         }
 

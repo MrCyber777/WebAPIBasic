@@ -216,7 +216,7 @@ namespace WebAPI.Controllers
                 //    FirstName = eventAdministrator.FirstName,
                 //    LastName = eventAdministrator.LastName
                 //};
-                return Ok(eventAdministrator);
+                return Ok(_mapper.Map<EventAdministrator, EventAdministratorDTO>(eventAdministrator));
             }
             catch(Exception ex)
             {

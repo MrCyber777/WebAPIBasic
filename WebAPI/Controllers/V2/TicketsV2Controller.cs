@@ -11,7 +11,7 @@ namespace WebAPI.Controllers.V2
     [ApiVersion("2.0")]
     [ApiController]
     //[Route("api/tickets")]
-    [Route("api/v{v:apiVersion}/tickets")]// Шаблонизированный маршрут с параметром
+    /*[Route("api/v{v:apiVersion}/tickets")]*/// Шаблонизированный маршрут с параметром
     // api/tickets?api-version=2.0
     //[DiscontinueVersion1ResourceFilter]
     public class TicketsV2Controller: ControllerBase
