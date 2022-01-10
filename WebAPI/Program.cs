@@ -16,6 +16,15 @@ builder.Services.AddVersionedApiExplorer(options =>
 {
     options.GroupNameFormat = "'v'VVV";//Конфигурация формата версий
 });
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy(builder =>
+    {
+        builder.WithOrigins("https://localhost:44306")
+        .AllowAnyHeader()
+        .AllowAnyMethod();
+    });
+});
 builder.Services.AddApiVersioning(options =>
 {
     // Указываем приложению использовать версию API по умолчанию
@@ -54,6 +63,7 @@ if (app.Environment.IsDevelopment())
         c.SwaggerEndpoint("/swagger/v2/swagger.json", "Web API Application v2");
     });
 }
+app.UseCors();
 
 app.MapControllers();
 

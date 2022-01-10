@@ -1,4 +1,4 @@
-﻿using App.Repository.ApiClient;
+﻿using MyApp.Repository.ApiClient;
 using Core.DTO;
 using Core.Models;
 using System;
@@ -7,16 +7,17 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace App.Repository
+namespace MyApp.Repository
 {
-    public class ProjectRepository//Класс вызывает методы класса WebApiexecutor
+    public class ProjectRepository : IProjectRepository
+    //Класс вызывает методы класса WebApiexecutor
     {
         private readonly IWebApiExecuter _webApiExecuter;
         public ProjectRepository(IWebApiExecuter webApiExecuter)
         {
             _webApiExecuter = webApiExecuter;
         }
-        public async Task<IEnumerable<Project>>GetAsync()// Клиентский метод для получения всех проектов 
+        public async Task<IEnumerable<Project>> GetAsync()// Клиентский метод для получения всех проектов 
         {
             var projectsFromDB = await _webApiExecuter.InvokeGet<IEnumerable<Project>>("api/projects");
             return projectsFromDB;
@@ -28,20 +29,20 @@ namespace App.Repository
         }
         public async Task<int> PostAsync(Project newProject)
         {
-            var project = await _webApiExecuter.InvokePost("api/projects",newProject);
+            var project = await _webApiExecuter.InvokePost("api/projects", newProject);
             return project.Id;
         }
         public async Task PutAsync(Project projectForUpdate)
         {
-             await _webApiExecuter.InvokePut("api/projects",projectForUpdate);           
+            await _webApiExecuter.InvokePut("api/projects", projectForUpdate);
         }
         public async Task DeleteAsync(int id)
         {
-            await _webApiExecuter.InvokeDelete($"api/projects/{id}");           
+            await _webApiExecuter.InvokeDelete($"api/projects/{id}");
         }
-        public async Task<Project> GetProjectTicketAsync(int pId)
+        public async Task<IEnumerable<Ticket>> GetProjectTicketsAsync(int pId)
         {
-            var ticketsFromDB = await _webApiExecuter.InvokeGet<Project>($"api/projects/{pId}/tickets");
+            var ticketsFromDB = await _webApiExecuter.InvokeGet<IEnumerable<Ticket>>($"api/projects/{pId}/tickets");
             return ticketsFromDB;
         }
         public async Task<EventAdministratorDTO> GetTicketAsync(int pId)
@@ -51,7 +52,7 @@ namespace App.Repository
         }
         public async Task<EventAdministratorDTO> PostAdminInfoAsync(EventAdministratorDTO eventAdminDTO)
         {
-            var eventAdministrator = await _webApiExecuter.InvokePost("api/projects/eventadmins",eventAdminDTO);
+            var eventAdministrator = await _webApiExecuter.InvokePost("api/projects/eventadmins", eventAdminDTO);
             return eventAdministrator;
         }
 

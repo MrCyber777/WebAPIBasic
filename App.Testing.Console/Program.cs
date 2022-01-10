@@ -1,5 +1,5 @@
-﻿using App.Repository;
-using App.Repository.ApiClient;
+﻿using MyApp.Repository;
+using MyApp.Repository.ApiClient;
 using Core.Models;
 using static System.Console;
 
@@ -31,20 +31,21 @@ WriteLine("Get All Tickets ------------------------------------------------");
 await GetTicketsAsync();
 WriteLine("All tickets ----------------------------------------------------");
 WriteLine("Start Getting Ticket by ID");
-await GetTicketsByIdAsync(1);
+var ticket = await GetTicketsByIdAsync(1);
 WriteLine("Finished Getting Ticket by ID");
 WriteLine("Start Creating Ticket");
-var ticket= await PostTicketAsync();
+var ticketId = await PostTicketAsync();
 WriteLine("Finish");
 await GetTicketsAsync();
 WriteLine("Updating ticket");
-await PutTicketAsync(ticket);
+await PutTicketAsync(ticketId);
 WriteLine("Finish updating");
 await GetTicketsAsync();
 WriteLine("Start deleting ticket");
-await DeleteTicketAsync(ticket);
+await DeleteTicketAsync(ticketId);
 WriteLine("Finish deleting");
 await GetTicketsAsync();
+WriteLine("OK");
 
 async Task GetProjectsAsync()
 {
@@ -84,24 +85,30 @@ async Task GetTicketsAsync()
     var tickets = await ticketRepository.GetTicketsAsync();
     tickets.ToList().ForEach(ticket => Console.WriteLine(ticket.Title));
 }
-async Task GetTicketsByIdAsync(int id)
+async Task<Ticket> GetTicketsByIdAsync(int id)
 {
     TicketRepository ticketRepository = new(webApiExecuter);
     var ticketsById = await ticketRepository.GetTicketByIdAsync(id);
     Console.WriteLine("------------------------------------------------------------");
     Console.WriteLine($"Single ticket: {ticketsById.Title}");
+    return ticketsById;
 }
 async Task<int> PostTicketAsync()
-{
-    Ticket ticket1 = new() {Title="Another title"};
+{  
+    Ticket ticket = new()
+    {
+        Title = "Title",
+        Description = "Some Description...",
+        ProjectId = 1
+    };
     TicketRepository ticketRepository=new(webApiExecuter);
-    return await ticketRepository.PostAsync(ticket1);
+    return await ticketRepository.PostAsync(ticket);
 }
 async Task PutTicketAsync(int id)
 {
     TicketRepository ticketRepository = new(webApiExecuter);
     var ticketFromDB=await ticketRepository.GetTicketByIdAsync(id);
-    ticketFromDB.Title += "Updated";
+    ticketFromDB.Title += " Updated";
     await ticketRepository.PutAsync(ticketFromDB);
 }
 async Task DeleteTicketAsync(int id)

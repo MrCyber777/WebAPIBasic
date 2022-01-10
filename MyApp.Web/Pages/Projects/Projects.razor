@@ -1,0 +1,50 @@
+﻿@page "/projects"
+@inject IProjectScreen _projectScreen
+
+@if (projects is not null)                          
+{
+    <div class="row">
+        <div class="col">
+            <div class="table-responsive">
+            <h1 class="text-info">Projects</h1>
+         
+                <table class="table table-striped border">
+                    <thead class="bg-info">
+                        <tr>
+                            <th>Project ID:</th>
+                            <th>Name</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in projects)
+                        {
+                        <tr>
+                            <td>@item.Id</td>
+                            <td>@item.Name</td>
+                            <td><NavLink class="btn btn-success" href="@($"/projects/{item.Id}/tickets")">View all tickets</NavLink></td>
+                        </tr>
+                        }
+                    </tbody>
+                </table>
+            
+            </div>
+        </div>
+    </div>
+}
+else
+{
+    <div class="row">
+        <div class="col">
+            <img class="text-center" src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wCEAAkGBxEQEhMQEhAWERIPERcXFhAQEw8VFxUXFhcYFxcYFRMYHTQgGBolGxYVITEhKCkrLi4uFx8zODUtNygtLisBCgoKBQUFDgUFDisZExkrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrK//AABEIAKgBLAMBIgACEQEDEQH/xAAcAAEAAgMBAQEAAAAAAAAAAAAABAcDBQYCAQj/xAA/EAACAQIDBAYHBgQGAwAAAAAAAQIDEQQSIQUGMUEHIlFhcYETMlKRobHBI0JicoLRCBSSwhVDU6Lh8GOy8f/EABQBAQAAAAAAAAAAAAAAAAAAAAD/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwC8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAHxsqDdzplliMZCjVw8KWGxFRQhPPLPBy0g58nd2Tta1+dgLgNFvZvdg9lwhUxVTJ6VtQhGLlOdrOVorkrq74artRvSk/4lsM3DAVeUZVoP9SpyX/pIC3dibYoY2jDE4eoqlKqtJK64aNNPVNPSxPKt/h3xObZtSH+li5rylCEvm2Wk2AuCNDV+ZJAANgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABgw+MpVHKMKkJuDtJQlGTi+yST0PO08PKrRq04zySqUpxjNfdcotKXk3c/N1N4zY2L4ehr0XquMKkH229enK3/xrQP00fmrpd3a/kcfOUI2oYy9WnZWUZN/awVuyTzeE12F57mb20dpUs8OpVhZVKLesH2r2ovk/qQOlTdr/EMBOMI3r4f7Wja13KKd4fqi2vG3YBk6Md5f8RwNOpNp1qP2VZfijwl+qOWXm1yOa/iIw2bZtOf+lioP+qM4/U4Hoc3l/ksdGnOVqOOy0pX4Kpf7KXdq3H9fcWp034fPsfEtK7pypT91WCfwbA5L+GrFXpY2j7FSlP8ArjOP9hc1V6FBfw24i2KxdO/r4eMrfknb+9l913wQHmitTOY6K0MOMq26q58QMGJq5n3LgTaEWopPiRsHSv1nwXAmgAYquJhF2bs/N+8ypgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAArvpaw+MkqUqPpHQgpOoqWbSV1aU1HVq1+5agWIc/vjupQ2lS9HU6lSF3TrxSzQf1i7ar5OzKu2D0hY3DWjKSxNNfdq3zJfhqLX33LG2Dv8AYLFWi5/y9R6ZK9km/wAM/VfwfcBSNejjNj4vj6GvR1jJawnB6XXt03bh3cmi89yN8aO06V1anXppekoN6r8Ue2D7eXBkrevdmhtKj6KqrNa060bZqcnzXanzXP3FXbp7h7Swu0aUnDJToVLyxEZxyTp84xV8zzLSzX0A0nSL0f4qjjpywmGqVKGJnnpujFvJOWsoNr1LSu03ZWa7C7p7JeKwCwmM1lWw0YVnBq+dwWZxfC6lqblH0DhtwOjXD7IqVK0Ks61SrHIpVFFKML3skuLdld9x2tSncyADxOWWN+xECnBzl48WbJo8KMYJtKyWr8gPSSS7EiBisfyh/V+xGxOKlPTguz9zPhcBfWei9n9wI+Hw8qjvy5yZuIRsklyVj7FW0XI+gAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEbaWNhh6U603aFKLk7avwS7Tjo9JlDnh6i8JU39QNxt7cvB4y8p0slR/5tLqy81wl5plc7e6NcXQvKi1iaa5R6tReMOD8n5HbU+kfBvjCtH9EH8pEmnv/AIB8ak4/mpVPomBVu7u8mOwVWFGEptZ1F4Som73dsqjLWD8LF9mq2XtLCYtupRlCpOno3ltOKfD1lmS4m1AAAAAAAaAAjxw9OHW4d7fD3mKrtSnHg3L8v7s+7Tw0qkUo8U72fMg0djyfrSS7lqAq7Yk/Vio971ZEliKlR+tKXcr/ACRuKOy6ceKzP8T+hLhBLRJLwVgMWBUlCOf1u/jx0v5GcAAAAAAAAAAAAAAAAAAAAAAAAAAAAMGOwkK1OdKos0KkXGS7n38mcfV6NMO/Vr1Y+Po3/adufGwK/qdGMfu4tr81JP5TRFn0ZVeWKg/GnJf3M7PaG8+DoaSrxcl92neb/wBvDzObx/SLFXVGg3+KrK3+2P7gbDczdKWBlUqTqqcpxypQTSSve7vxeiOsOD3U3uxOIxKo1VFxqKXqRayZU3e99VpbXtR3gAAAAAAAAGDHYj0UJTte3LxdjTLeCXOnH3s3lfK1lna0tLSa1Ib2NRf3WvCUgIa3h7aXun/wZI7fhzhLycWZHsKl2yXmv2Mb2BDlOXnlYE7A46FZPLe64pkoh7P2fGjezcnLi33cNCYAAAAAAAAAAAAAAAAAAAAAAAAAAAAqPbyx1fEVKc41ZvO7U4qbgo36uVLS1raluACqsBuLi6mslGivxyTf9Mb/ADR0eA6PqEbOrUnVfYrQj8Nfidkc7vFvVTw16cLVK3s/dh+d/T5ASpU8Fs+GfJCinpeMbzl3e1Im7M2lSxMPSUpZo3s9Gmn2NPgValiMfW51aj8lFfKMSwtgbLjgKMs9RavPUm9IqytpfkkBuwRcBtGjXTlSqKaTs8vJ965EoAAAABp94sZUpKGR5VJu8klytZagR95MBVnJTis8VG2VcV325/8ABqsJtWtR0Urpfcndr90b3Yu2PSdSbtPk+Uv+Sdi8BTq+vFN+0tH7wIOD3gpT0n9m+/WPv5eZt4STV07p81qjmcbu5KOtOWZezKyfv4P4EXZSr06sYJSj1lmg07W5tr6gdiAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADhd7956kZzw1HqKGk6n3m7J2j7K148fA1G7+7NXFNTf2dHnUa1l+Rc/Hh48DvcXu/hqtT01SkpT0u7ySduGaKdmbOMUtFolyQEXZuzqWHh6OlHKufbJ9snzZxO/m3PSS/lYPq03ebX3pLhHwXz8DpN7dt/ytK0X9rVuoLTTtk13fOxw+6uxni63Wv6Kn1pvXXsjftfyuB0/R/suVOnKvLT09ssfwq/WfjfTu8T3i98cmIdJUk6cZ5HK/WvezaXDR/I6TFVlSpznwVODdu6Kvb4FZbAoOtiqSet6meX6eu/kBZW0sdHD05VZ3ajbRcW27JIi7E21DFKWWLjKFrxduD4NPyZj3thfC1Pw5X7px+lzQbiztWqR9qlf3SX7gZ9vY+vTxDSm4qNnFJ6NW4tc9bnSYepDE0VJq8akdV2Pg15O5rd7MDnpqql1qXH8r4+56+8g7o47LJ0W9J6x/MuK818gMO1dmyoSuruDfVl2dz7GbfYm2M9qdR9flL2vHv8AmbitSU04yV01qmcjtfZboO61pt6S7O5/uB2INXu9i51Kbz65JWUu1W595tAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAqXbFSti8XKLi3Uc3CNP2Um7L6t97ZZWw9lxwtKNKOrWspe1J8X/wB5ImKjHNnyrM1bNZXt48TIBod9cTkwslzqyUPLi/gmaHo+w2arUqP/AC4KK8Zv9o/Ez9IlZ3ow+7aUr9r0XwXzNnuLhcmGzta1ZuXkuqvk35gbTblPNh6y/wDHL4K5xm51S2KivahJfC/0O9xEM0ZR9qLXvViuN3J5cTRf47e9NfUCyZxTTTV01ZruZwGMoSw1ZpPWnJOL7VxT/wC95YJqNvbH/mMsotRnHTW9muxsDYYHEqrTjUXCS4dj5r3maUU1ZpNPk9SFsbA+gpqm5ZndttcLvkicB5hBRVkkkuSVl7j0AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAYcThadVWqU4zSd0pxjJL3mWMUlZKyXBLl5H0ADWUNg4eFX00YWldtK7ypvmo8jZgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAP/2Q==" height="200" />
+        </div>
+    </div>
+}
+
+@code {
+    IEnumerable<Project> projects;
+    protected override async Task OnInitializedAsync()
+    {
+        projects = await _projectScreen.ViewProjects();
+    }
+}

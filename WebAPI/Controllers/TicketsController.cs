@@ -37,6 +37,7 @@ namespace WebAPI.Controllers
             }               
             //return ticketsFromDB;          
         }
+      
         /// <summary>
         /// Gets a ticket by Id
         /// </summary>

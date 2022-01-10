@@ -11,11 +11,11 @@ namespace Core.Models
         //[FromQuery(Name = "tId")]
         public int Id { get; set; }
         [Required]
+        [StringLength(100)]
         public string Title { get; set; }
 
         public string Description { get; set; }
-        [Required]
-        public double Price { get; set; }
+        public double? Price { get; set; }
         //[FromRoute(Name = "pId")]
         [Required]
         public int? ProjectId { get; set; }
