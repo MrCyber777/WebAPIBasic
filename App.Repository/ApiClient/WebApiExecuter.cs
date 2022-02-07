@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Core.StaticData;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http.Headers;
@@ -12,11 +13,14 @@ namespace MyApp.Repository.ApiClient
     {
         private readonly string _baseUrl;
         private readonly HttpClient _httpClient;
-        public WebApiExecuter(string baseUrl, HttpClient httpClient)
+        private readonly ITokenRepository _tokenRepository;
+        public WebApiExecuter(string baseUrl, HttpClient httpClient,ITokenRepository tokenRepository)
         {
             _baseUrl = baseUrl;
             _httpClient = httpClient;
+            _tokenRepository = tokenRepository;
 
+            _httpClient.DefaultRequestHeaders.Clear();
             _httpClient.DefaultRequestHeaders.Accept.Clear();// Очищаем входящие заголовки
             _httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));// устанавливаем заголовок типа ContentTypeHeader   Important!!!
         }
@@ -24,11 +28,14 @@ namespace MyApp.Repository.ApiClient
         // Создаём универсальный метод для всех GET запросов
         public async Task<T> InvokeGet<T>(string uri)
         {
-            return await _httpClient.GetFromJsonAsync<T>(GetUrl(uri));
+            AddTokenHeader();
+            var response= await _httpClient.GetFromJsonAsync<T>(GetUrl(uri));
+            return response;
         }
         // Создаём универсальный метод для всех POST запросов
         public async Task<T> InvokePost<T>(string uri, T data)
         {
+            AddTokenHeader();
             var response = await _httpClient.PostAsJsonAsync(GetUrl(uri), data);
             //response.EnsureSuccessStatusCode();
             await HandleError(response);
@@ -37,12 +44,14 @@ namespace MyApp.Repository.ApiClient
 
         public async Task InvokePut<T>(string uri, T data)
         {
+            AddTokenHeader();
             var response = await _httpClient.PutAsJsonAsync(GetUrl(uri), data);
             //response.EnsureSuccessStatusCode();
             await HandleError(response);
         }
         public async Task InvokeDelete(string uri)
         {
+            AddTokenHeader();
             var response = await _httpClient.DeleteAsync(GetUrl(uri));
             //response.EnsureSuccessStatusCode();
             await HandleError(response);
@@ -56,6 +65,22 @@ namespace MyApp.Repository.ApiClient
             {
                 var error = await response.Content.ReadAsStringAsync();
                 throw new HttpRequestException(error);
+            }
+        }
+
+        public async Task<string> InvokePostReturnString<T>(string uri, T data)
+        {
+            AddTokenHeader();
+            var response = await _httpClient.PostAsJsonAsync(GetUrl(uri), data);
+            await HandleError(response);
+            return await response.Content.ReadAsStringAsync();
+        }
+        void AddTokenHeader()// Добавление токена в заголовок запроса
+        {
+           if(_tokenRepository is not null && !string.IsNullOrWhiteSpace(_tokenRepository.Token))
+            {
+                _httpClient.DefaultRequestHeaders.Remove(SD.TOKENHEADER);
+                _httpClient.DefaultRequestHeaders.Add(SD.TOKENHEADER,_tokenRepository.Token);
             }
         }
     }

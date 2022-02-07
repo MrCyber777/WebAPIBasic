@@ -8,7 +8,7 @@ namespace MyApp.Repository
         Task DeleteAsync(int id);
         Task<IEnumerable<Project>> GetAsync();
         Task<Project> GetByIdAsync(int id);
-        Task<IEnumerable<Ticket>> GetProjectTicketsAsync(int pId);
+        Task<IEnumerable<Ticket>> GetProjectTicketsAsync(int pId, string? filter = null);
         Task<EventAdministratorDTO> GetTicketAsync(int pId);
         Task<EventAdministratorDTO> PostAdminInfoAsync(EventAdministratorDTO eventAdminDTO);
         Task<int> PostAsync(Project newProject);

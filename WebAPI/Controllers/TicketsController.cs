@@ -3,12 +3,14 @@ using DataStore.EF;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
+using WebAPI.Filters;
 
 namespace WebAPI.Controllers
 {
     [ApiVersion("1.0")]
     [ApiController]
     [Route("api/[controller]")]
+    [CustomTokenAuthFilter]
     //[DiscontinueVersion1ResourceFilter]
     public class TicketsController: ControllerBase
     {

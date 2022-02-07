@@ -1,5 +1,6 @@
-﻿@page "/projects"
+﻿@page "/"
 @inject IProjectScreen _projectScreen
+@inject IAuthenticationScreen _authScreen
 
 @if (projects is not null)                          
 {
@@ -30,8 +31,15 @@
             
             </div>
         </div>
-    </div>
+    </div>   
 }
+@if(token is not null)
+{
+    <span>
+        @token
+ </span>
+}
+
 else
 {
     <div class="row">
@@ -43,8 +51,10 @@ else
 
 @code {
     IEnumerable<Project> projects;
+    string token;
     protected override async Task OnInitializedAsync()
     {
+        //token = await _authScreen.LoginAsync("John","Password");        
         projects = await _projectScreen.ViewProjects();
     }
 }

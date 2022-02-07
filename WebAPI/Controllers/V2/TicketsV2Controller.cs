@@ -3,6 +3,7 @@ using DataStore.EF;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
+using WebAPI.Filters;
 using WebAPI.Filters.V2;
 using WebAPI.QueryFilters;
 
@@ -11,6 +12,8 @@ namespace WebAPI.Controllers.V2
     [ApiVersion("2.0")]
     [ApiController]
     [Route("api/tickets")]
+    [CustomTokenAuthFilter]
+    //[APIKeyAuthFilter]
     /*[Route("api/v{v:apiVersion}/tickets")]*/// Шаблонизированный маршрут с параметром
     // api/tickets?api-version=2.0
     //[DiscontinueVersion1ResourceFilter]
@@ -70,12 +73,12 @@ namespace WebAPI.Controllers.V2
             return Ok(await queryTickets.ToListAsync());
             //return ticketsFromDB;          
         }
-        [HttpGet]
-        public async Task<IActionResult> GetTicketByOwnerNameAsync(string name)
+        [HttpGet("{name}")]
+        public async Task<IActionResult> GetTicketByOwnerNameAsync(string name,int pId)
         {
             try
             {
-                var ownerNameTicket = await _db.Tickets.Where(x => x.Owner == name).FirstOrDefaultAsync();
+                var ownerNameTicket = _db.Tickets.Where(x => x.Owner == name);
                 return Ok(ownerNameTicket);
             }
             catch (Exception ex)
@@ -89,7 +92,7 @@ namespace WebAPI.Controllers.V2
         /// </summary>
         /// <param name="id">Id of the ticket</param>
         /// <returns>Returns the ticket from the database or if an error occurs returns NotFound</returns>
-        [HttpGet("{id}")]
+        [HttpGet("{id:int}")]
         public async Task<IActionResult> GetByIdAsync(int id)
         {
 

@@ -1,0 +1,23 @@
+﻿<div class="row" style="@($"display:{displayClass}")">
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <strong>@ErrorMessage</strong>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close" @onclick="Close"></button>
+    </div>
+</div>
+
+@code {
+    public string ErrorMessage { get; set; }
+
+    string displayClass = "none";
+
+    public void Show()
+    {
+        displayClass = "block";
+        StateHasChanged();
+    }
+    public void Close()
+    {
+        displayClass = "none";
+        ErrorMessage = string.Empty;
+    }
+}
