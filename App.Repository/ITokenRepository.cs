@@ -2,6 +2,9 @@
 {
     public interface ITokenRepository
     {
-        string Token { get; set; }
+        //string Token { get; set; }
+
+        Task<string?> GetToken();
+        Task SetToken(string token);
     }
 }

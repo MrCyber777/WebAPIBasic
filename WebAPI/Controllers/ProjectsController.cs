@@ -12,7 +12,7 @@ namespace WebAPI.Controllers
     [ApiVersion("1.0")]
     [ApiController]
     [Route("api/[controller]")]
-    //[CustomTokenAuthFilter]
+    [CustomTokenAuthFilter]
     public class ProjectsController : ControllerBase
     {
         private readonly ApplicationDbContext _db;

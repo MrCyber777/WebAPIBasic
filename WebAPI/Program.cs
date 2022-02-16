@@ -6,6 +6,11 @@ using Microsoft.AspNetCore.Mvc;
 using WebAPI.Auth;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddSingleton<ICustomTokenManager, CustomTokenManager>();
+builder.Services.AddSingleton<ICustomUserManager, CustomUserManager>();
+
+
 // ConfigureServices() **************************
 builder.Services.AddControllers(options =>
 {
@@ -52,9 +57,6 @@ builder.Services.AddSwaggerGen(x =>
             x.SwaggerDoc("v1", new() { Title = "Basic Web API", Version = "v1" });
             x.SwaggerDoc("v2", new() { Title = "Basic Web API", Version = "v2" });
         });
-
-builder.Services.AddSingleton<ICustomTokenManager, CustomTokenManager>();
-builder.Services.AddSingleton<ICustomUserManager, CustomUserManager>();
 
 // **********************************************
 var app = builder.Build();

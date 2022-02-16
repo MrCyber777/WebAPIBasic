@@ -17,7 +17,7 @@
 
             return verified;
         }
-        public string GetUserInformationByToken(string token)
+        public string? GetUserInformationByToken(string? token)
         {
             var tokenFromDb=_tokens.FirstOrDefault(x=>token is not null && token.Contains(x.TokenString));
             if (tokenFromDb is not null)

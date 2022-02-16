@@ -9,5 +9,8 @@ namespace Core.StaticData
         public const string APIKEYHEADER = "ApiKey";
         public const string CLIENTIDHEADER = "ClientId";
         public const string TOKENHEADER = "TokenHeader";
+        public const string AdminEndUser = "Admin";
+        public const string SuperAdminEndUser = "Super Admin";
+        public const string User = "User";
     }
 }

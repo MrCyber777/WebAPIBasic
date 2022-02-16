@@ -2,6 +2,7 @@
 using DataStore.EF;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Diagnostics;
 using WebAPI.Filters;
 using WebAPI.QueryFilters;
 
@@ -10,7 +11,7 @@ namespace WebAPI.Controllers.V2
     [ApiVersion("2.0")]
     [ApiController]
     [Route("api/projects")]
-    //[CustomTokenAuthFilter]
+    [CustomTokenAuthFilter]
     public class ProjectsV2Controller:ControllerBase
     {
         private readonly ApplicationDbContext _db;
@@ -30,6 +31,89 @@ namespace WebAPI.Controllers.V2
                 return NotFound();
 
             return Ok(listOfTickets);
+        }
+        [HttpGet]
+        //[Route("api/ticket")]
+        public async Task<IActionResult> GetAsync()
+        {
+            try
+            {
+                var projectsFromDB = await _db.Projects.ToListAsync();
+                return Ok(projectsFromDB);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+                return BadRequest();
+            }
+
+        }
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetByIdAsync(int id)
+        {
+            try
+            {
+                Project? projectFromDB = await _db.Projects.FindAsync(id);
+                return Ok(projectFromDB);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+                return NotFound();
+            }
+
+        }
+        [HttpPost]
+        public async Task<IActionResult> PostAsync([FromBody] Project? newProject)
+        {
+            if (newProject is null)
+                return BadRequest();
+            try
+            {
+                await _db.Projects.AddAsync(newProject);
+                await _db.SaveChangesAsync();
+                return CreatedAtAction(nameof(GetByIdAsync), new { id = newProject.Id }, newProject);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+                return StatusCode(500);
+            }
+
+            //return newProject.Id;   
+            // return Ok(newProject.Id);
+        }
+        [HttpPut]
+        public async Task<IActionResult> PutAsync(Project projectForUpdate)
+        {
+            try
+            {
+                //_db.Update(projectForUpdate);
+                _db.Entry(projectForUpdate).State = EntityState.Modified;
+                await _db.SaveChangesAsync();
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+                return StatusCode(500);
+            }
+        }
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete(int id)
+        {
+            try
+            {
+                Project projectFromDB = await _db.Projects.FindAsync(id);
+                _db.Entry(projectFromDB).State = EntityState.Deleted;
+                await _db.SaveChangesAsync();
+                return Ok(projectFromDB);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+                return NotFound();
+            }
         }
     }
 }

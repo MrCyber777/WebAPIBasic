@@ -16,16 +16,24 @@ namespace MyApp.Repository
             _webApiExecuter = webApiExecuter;  
             _tokenRepository = tokenRepository;
         }
-        public async Task<string> GetUserInfoAsync(string token)
+        public async Task<string?> GetUserInfoAsync(string? token)
         {
-            var result = await _webApiExecuter.InvokePostReturnString("getuserinfo",new { token });
+            var result = await _webApiExecuter.InvokePostReturnString("getuserinfo", new { token = token });
+            
+            if(string.IsNullOrWhiteSpace(result) || result.Equals("\"\""))
+                return null;
+
             return result;
         }
 
-        public async Task<string> LoginAsync(string userName, string password)
+        public async Task<string?> LoginAsync(string userName, string password)
         {
             var token = await _webApiExecuter.InvokePostReturnString("authenticate", new {userName = userName,password = password });
-            _tokenRepository.Token = token; 
+            await _tokenRepository.SetToken(token);
+
+            if (string.IsNullOrWhiteSpace(token) || token.Equals("\"\""))
+                return null;
+
             return token;
         }
     }

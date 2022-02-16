@@ -28,14 +28,16 @@ namespace MyApp.Repository.ApiClient
         // Создаём универсальный метод для всех GET запросов
         public async Task<T> InvokeGet<T>(string uri)
         {
-            AddTokenHeader();
+            var token = await _tokenRepository.GetToken();
+             AddTokenHeader(token);
             var response= await _httpClient.GetFromJsonAsync<T>(GetUrl(uri));
             return response;
         }
         // Создаём универсальный метод для всех POST запросов
         public async Task<T> InvokePost<T>(string uri, T data)
         {
-            AddTokenHeader();
+            var token = await _tokenRepository.GetToken();
+            AddTokenHeader(token);
             var response = await _httpClient.PostAsJsonAsync(GetUrl(uri), data);
             //response.EnsureSuccessStatusCode();
             await HandleError(response);
@@ -44,14 +46,16 @@ namespace MyApp.Repository.ApiClient
 
         public async Task InvokePut<T>(string uri, T data)
         {
-            AddTokenHeader();
+            var token = await _tokenRepository.GetToken();
+            AddTokenHeader(token);
             var response = await _httpClient.PutAsJsonAsync(GetUrl(uri), data);
             //response.EnsureSuccessStatusCode();
             await HandleError(response);
         }
         public async Task InvokeDelete(string uri)
         {
-            AddTokenHeader();
+            var token = await _tokenRepository.GetToken();
+            AddTokenHeader(token);
             var response = await _httpClient.DeleteAsync(GetUrl(uri));
             //response.EnsureSuccessStatusCode();
             await HandleError(response);
@@ -68,19 +72,20 @@ namespace MyApp.Repository.ApiClient
             }
         }
 
-        public async Task<string> InvokePostReturnString<T>(string uri, T data)
+        public async Task<string?> InvokePostReturnString<T>(string uri, T? data)
         {
-            AddTokenHeader();
+            var token = await _tokenRepository.GetToken();
+            AddTokenHeader(token);
             var response = await _httpClient.PostAsJsonAsync(GetUrl(uri), data);
             await HandleError(response);
             return await response.Content.ReadAsStringAsync();
         }
-        void AddTokenHeader()// Добавление токена в заголовок запроса
+        void  AddTokenHeader(string? token)// Добавление токена в заголовок запроса
         {
-           if(_tokenRepository is not null && !string.IsNullOrWhiteSpace(_tokenRepository.Token))
+           if(_tokenRepository is not null && !string.IsNullOrWhiteSpace(token))
             {
                 _httpClient.DefaultRequestHeaders.Remove(SD.TOKENHEADER);
-                _httpClient.DefaultRequestHeaders.Add(SD.TOKENHEADER,_tokenRepository.Token);
+                _httpClient.DefaultRequestHeaders.Add(SD.TOKENHEADER,token);
             }
         }
     }

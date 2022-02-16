@@ -14,14 +14,16 @@ namespace MyApp.Business
         {
             _authenticatioRepository = authenticationRepository;
         }
-        public async Task<string> LoginAsync(string userName, string password)
+        public async Task<string?> LoginAsync(string userName, string password)
         {
-            return await _authenticatioRepository.LoginAsync(userName, password);
+            var token = await _authenticatioRepository.LoginAsync(userName, password);
+            return token;
 
         }
-        public async Task<string> GetUserInfoAsync(string token)
+        public async Task<string?> GetUserInfoAsync(string? token)
         {
-            return await _authenticatioRepository.GetUserInfoAsync(token);
+            var userName = await _authenticatioRepository.GetUserInfoAsync(token);
+            return userName;
         }
     }
 }

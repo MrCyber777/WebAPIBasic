@@ -3,8 +3,7 @@ using WebAPI.Auth;
 
 namespace WebAPI.Controllers.Auth
 {
-    [ApiController]
-    [Route("api/[controller]")]
+    [ApiController]   
     public class AuthController:ControllerBase
     {
         private readonly ICustomUserManager _customUserManager;
@@ -17,7 +16,7 @@ namespace WebAPI.Controllers.Auth
         }
         [HttpPost]
         [Route("/authenticate")]
-        public async Task<string> AuthenticateAsync(UserCredential userCredential)
+        public async Task<string?> AuthenticateAsync(UserCredential userCredential)
         {
             var result = await Task.FromResult(_customUserManager.Authenticate(userCredential.userName,userCredential.password));// FromResult - посылает запрос и получает string
             return result;
@@ -29,9 +28,9 @@ namespace WebAPI.Controllers.Auth
             var result = await Task.FromResult(_customTokenManager.VerifyToken(token));
             return result;
         }
-        [HttpGet]
+        [HttpPost]
         [Route("/getuserinfo")]
-        public async Task<string> GetUserInfoByTokenAsync(string token)
+        public async Task<string?> GetUserInfoByTokenAsync(string? token)
         {
             var result = await Task.FromResult(_customTokenManager.GetUserInformationByToken(token));
             return result;

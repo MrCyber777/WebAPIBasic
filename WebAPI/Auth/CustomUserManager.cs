@@ -12,10 +12,10 @@
         {
             _customtokenManager = customTokenManager;
         }
-        public string Authenticate(string userName, string password)
+        public string? Authenticate(string userName, string password)
         {
             // Валидация пользователя
-            if (!_credentials[userName].Equals(password))
+            if (!string.IsNullOrWhiteSpace(userName) && !_credentials[userName].Equals(password))
                 return string.Empty;
 
             // Generate token

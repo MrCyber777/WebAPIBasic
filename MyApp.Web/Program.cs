@@ -19,10 +19,10 @@ builder.Services.AddTransient<ITicketScreen,TicketScreen>();
 builder.Services.AddTransient<ITicketRepository,TicketRepository>();
 builder.Services.AddTransient<IAuthenticationRepository, AuthenticationRepository>();
 builder.Services.AddTransient<IAuthenticationScreen,AuthenticationScreen>();
-builder.Services.AddTransient<ITokenRepository, TokenRepository>();
+builder.Services.AddSingleton<ITokenRepository, TokenRepository>();
 builder.Services.AddSingleton<IWebApiExecuter>(options => new WebApiExecuter("https://localhost:44334", new HttpClient(), options.GetRequiredService<ITokenRepository>()));
 
-builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
+//builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
 // AddScoped=Singleton  
 
 await builder.Build().RunAsync();
