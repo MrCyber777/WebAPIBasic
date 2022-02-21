@@ -1,0 +1,27 @@
+﻿@inject NavigationManager _navigationManager
+@inject IAuthenticationScreen _authenticationScreen
+
+@if (!string.IsNullOrWhiteSpace(userName))
+{
+    <span class="mx-3">
+        Welcome,@userName
+    </span>
+    <button class="btn btn-danger" @onclick="LogOutHandler">Log out</button>
+}
+
+@code {
+    [CascadingParameter] public Task<AuthenticationState> AuthenticationState { get; set; }
+
+    string userName;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var state = await AuthenticationState;
+        userName = state.User.Identity.Name;
+    }
+    async Task LogOutHandler()
+    {
+        await _authenticationScreen.LogOut();
+        _navigationManager.NavigateTo("/", true);
+    }
+}

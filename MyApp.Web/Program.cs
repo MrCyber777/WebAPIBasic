@@ -12,7 +12,7 @@ builder.RootComponents.Add<App>("#app");
 builder.RootComponents.Add<HeadOutlet>("head::after");
 builder.Services.AddOptions();
 builder.Services.AddAuthorizationCore();
-builder.Services.AddSingleton<AuthenticationStateProvider, CustomTokenAuthenticationStateProvider>();
+builder.Services.AddSingleton<AuthenticationStateProvider, JWTTokenAuthenticationStateProvider>();
 builder.Services.AddTransient<IProjectScreen,ProjectScreen>();
 builder.Services.AddTransient<IProjectRepository, ProjectRepository>();
 builder.Services.AddTransient<ITicketScreen,TicketScreen>();

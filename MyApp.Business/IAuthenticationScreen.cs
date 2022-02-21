@@ -5,5 +5,6 @@ namespace MyApp.Business
     {
         Task<string?> GetUserInfoAsync(string? token);
         Task<string?> LoginAsync(string userName, string password);
+        Task LogOut();
     }
 }

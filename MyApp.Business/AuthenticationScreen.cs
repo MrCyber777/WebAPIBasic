@@ -10,9 +10,11 @@ namespace MyApp.Business
     public class AuthenticationScreen : IAuthenticationScreen
     {
         private readonly IAuthenticationRepository _authenticatioRepository;
-        public AuthenticationScreen(IAuthenticationRepository authenticationRepository)
+        private readonly ITokenRepository _tokenRepository;
+        public AuthenticationScreen(IAuthenticationRepository authenticationRepository,ITokenRepository tokenRepository)
         {
             _authenticatioRepository = authenticationRepository;
+            _tokenRepository = tokenRepository;
         }
         public async Task<string?> LoginAsync(string userName, string password)
         {
@@ -24,6 +26,10 @@ namespace MyApp.Business
         {
             var userName = await _authenticatioRepository.GetUserInfoAsync(token);
             return userName;
+        }
+        public  Task LogOut()
+        {
+            return _tokenRepository.SetToken(string.Empty);
         }
     }
 }

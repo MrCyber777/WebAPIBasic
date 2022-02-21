@@ -7,7 +7,7 @@ using WebAPI.Auth;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddSingleton<ICustomTokenManager, CustomTokenManager>();
+builder.Services.AddSingleton<ICustomTokenManager, JWTTokenManager>();
 builder.Services.AddSingleton<ICustomUserManager, CustomUserManager>();
 
 
